@@ -1,3 +1,9 @@
+from FCFS import fcfs
+from SRT import srt
+from SJF import sjf
+from RR import rr
+
+
 '''
 rand object is from
 https://stackoverflow.com/questions/7287014/is-there-any-drand48-equivalent-in-python-or-a-wrapper-to-it
@@ -12,6 +18,58 @@ alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N'
 # from __future__ import division
 
 
+def part_one(processes, cpu_bound_processes, io_bound_processes, seed, lambda_, upper_bound):
+
+    '''
+    :param processes:
+    :param cpu_bound_processes:
+    :param io_bound_processes:
+    :param seed:
+    :param lambda_:
+    :param upper_bound:
+    :return: void
+
+    Part one that must be ran at the beginning, but with less print statements that before
+    '''
+    rand = Rand48(seed)
+    print(f'<<< PROJECT PART I -- process set (n={processes}) with {cpu_bound_processes} CPU-bound process', end='')
+    if cpu_bound_processes == 1:
+        print(" >>>")
+    else:
+        print("es >>>")
+    for process in range(processes):
+        # For a specific process (A, B, etc)
+        # make it
+        Process_ = Process(alphabet[process])
+        arrival_time = math.floor(next_exp(lambda_, rand, upper_bound))
+        Process_.set_arrival_time(arrival_time)
+        num_bursts = math.ceil(rand.drand() * 100)
+        process_name = Process_.get_process_name()
+        if process + 1 <= io_bound_processes:
+            print("I/O-", end='')
+        else:
+            print("CPU-", end='')
+
+        print(f'bound process {process_name}: arrival time {arrival_time}ms; {num_bursts} CPU bursts')
+        for burst in range(num_bursts - 1):
+            # alternate between cpu and io bursts
+            cpu_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound)))
+            if (process + 1 > io_bound_processes):
+                cpu_burst_tmp *= 4
+            print(f'--> CPU burst {cpu_burst_tmp}ms', end='')
+            Process_.add_cpu_burst(cpu_burst_tmp)
+            io_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound))) * 10
+            if (process + 1 > io_bound_processes):
+                io_burst_tmp = io_burst_tmp // 4
+            print(f' --> I/O burst {io_burst_tmp}ms')
+            Process_.add_io_bursts(io_burst_tmp)
+        cpu_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound)))
+        if (process + 1 > io_bound_processes):
+            cpu_burst_tmp *= 4
+        print(f'--> CPU burst {cpu_burst_tmp}ms')
+        Process_.add_cpu_burst(cpu_burst_tmp)
+
+
 # Determines a CPU burst
 def next_exp(lambda_, rand, upper_bound):
     burst = rand.drand()
@@ -20,8 +78,6 @@ def next_exp(lambda_, rand, upper_bound):
         burst = rand.drand()
         time = ((-1 * math.log(burst)) / lambda_)
     return time
-
-
 
 
 class Rand48(object):
@@ -36,6 +92,7 @@ class Rand48(object):
     def drand(self):
         # This drand fuction calls next
         return self.next() / 2**48
+
 
 class Process(object):
     def __init__(self, char):
@@ -59,8 +116,30 @@ class Process(object):
 
     def get_process_name(self):
         return self.name
+
+'''
+class Simulator(object):
+    def __init__(self):
+        # make priority queue for everything but FCFS
+        pass
+'''
+
+
 if __name__ == '__main__':
     queue = []
+
+    '''
+    Part 2
+    example run project.py 3 1 1024 0.001 3000 4 0.75 256
+    1st: 3 is number of process. assigned alphabeticals from A-Z, most is 26.
+    2nd: 1 is number of cpu-bound processes
+    3rd: 1024 is seed for the pseudorandom number sequence
+    4th: 0.001 is lambda. 1/lambda_ is the average random value generated
+    5th: 3000 is upper bound for valid pseudo-random numbers, upper bound relates to arrival time
+    6th: 4ms is time required to make a context switch 
+    7th: 0.75 is estimate cpu burst time, for SJF and SRT.
+    8th: 256 is time slice in ms
+    '''
 
 
     # number of process. assigned alphabeticals from A-Z, most is 26.
@@ -82,44 +161,16 @@ if __name__ == '__main__':
     lower_bound = 0
     upper_bound = int(sys.argv[5])
 
+    context_switch_time = int(sys.argv[6])
 
+    cpu_burst_time_estimate = float(sys.argv[7])
 
+    time_slice = int(sys.argv[8])
 
-    # todo: Add to class later
-    rand = Rand48(seed)
-    print(f'<<< PROJECT PART I -- process set (n={processes}) with {cpu_bound_processes} CPU-bound process', end='')
-    if cpu_bound_processes == 1:
-        print(" >>>")
-    else:
-        print("es >>>")
-    for process in range(processes):
-        # For a specific process (A, B, etc)
-        # make it
-        Process_ = Process(alphabet[process])
-        arrival_time = math.floor(next_exp(lambda_, rand, upper_bound))
-        Process_.set_arrival_time(arrival_time)
-        num_bursts = math.ceil(rand.drand() * 100)
-        process_name = Process_.get_process_name()
-        if process+1 <= io_bound_processes:
-            print("I/O-", end='')
-        else:
-            print("CPU-", end='')
+    part_one(processes, cpu_bound_processes, io_bound_processes, seed, lambda_, upper_bound)
 
-        print(f'bound process {process_name}: arrival time {arrival_time}ms; {num_bursts} CPU bursts:')
-        for burst in range(num_bursts-1):
-            # alternate between cpu and io bursts
-            cpu_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound)))
-            if (process+1 > io_bound_processes):
-                cpu_burst_tmp *= 4
-            print(f'--> CPU burst {cpu_burst_tmp}ms', end='')
-            Process_.add_cpu_burst(cpu_burst_tmp)
-            io_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound))) * 10
-            if (process+1 > io_bound_processes):
-                io_burst_tmp = io_burst_tmp // 4
-            print(f' --> I/O burst {io_burst_tmp}ms')
-            Process_.add_io_bursts(io_burst_tmp)
-        cpu_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound)))
-        if (process + 1 > io_bound_processes):
-            cpu_burst_tmp *= 4
-        print(f'--> CPU burst {cpu_burst_tmp}ms')
-        Process_.add_cpu_burst(cpu_burst_tmp)
+    # Part 2 starts, Could be it's own function
+
+    print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate}; t_slice={time_slice}ms >>>')
+
+    fcfs()
