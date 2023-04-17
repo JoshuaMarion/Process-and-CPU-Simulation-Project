@@ -108,6 +108,7 @@ class Process(object):
         self.start_time = 0
         self.num_cpu_bursts = 0
         self.cpu_burst_index = 0
+        self.io_burst_index = 0
 
     def add_cpu_burst(self, cpu_burst):
         self.cpu_bursts.append(cpu_burst)
@@ -115,7 +116,7 @@ class Process(object):
         self.num_cpu_bursts += 1
 
     def add_io_bursts(self, io_burst):
-        self.cpu_bursts.append(io_burst)
+        self.io_bursts.append(io_burst)
         self.total_bursts += 1
 
     def set_arrival_time(self, arrival_time):
@@ -151,6 +152,12 @@ class Process(object):
     def get_cpu_burst_index(self):
         return self.cpu_burst_index
 
+    def increment_io_burst_index(self):
+        self.io_burst_index += 1
+
+    def get_io_burst_index(self):
+        return self.io_burst_index
+
 
 
 
@@ -167,7 +174,9 @@ if __name__ == '__main__':
 
     '''
     Part 2
-    example run project.py 3 1 1024 0.001 3000 4 0.75 256
+    example: python project.py 3 1 1024 0.001 3000 4 0.75 256
+    When running, use only your function
+    
     1st: 3 is number of process. assigned alphabeticals from A-Z, most is 26.
     2nd: 1 is number of cpu-bound processes
     3rd: 1024 is seed for the pseudorandom number sequence
@@ -176,6 +185,8 @@ if __name__ == '__main__':
     6th: 4ms is time required to make a context switch 
     7th: 0.75 is estimate cpu burst time, for SJF and SRT.
     8th: 256 is time slice in ms
+    
+    
     '''
 
 
@@ -209,7 +220,5 @@ if __name__ == '__main__':
     # Part 2 starts, Could be it's own function
 
     print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate}; t_slice={time_slice}ms >>>')
-
-    print(process_array[0].num_cpu_bursts)
 
     fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
