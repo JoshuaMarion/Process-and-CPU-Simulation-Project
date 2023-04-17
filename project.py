@@ -3,6 +3,8 @@ from SRT import srt
 from SJF import sjf
 from RR import rr
 
+process_array = []
+
 
 '''
 rand object is from
@@ -41,6 +43,7 @@ def part_one(processes, cpu_bound_processes, io_bound_processes, seed, lambda_, 
         # For a specific process (A, B, etc)
         # make it
         Process_ = Process(alphabet[process])
+        process_array.append(Process_)
         arrival_time = math.floor(next_exp(lambda_, rand, upper_bound))
         Process_.set_arrival_time(arrival_time)
         num_bursts = math.ceil(rand.drand() * 100)
@@ -56,17 +59,17 @@ def part_one(processes, cpu_bound_processes, io_bound_processes, seed, lambda_, 
             cpu_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound)))
             if (process + 1 > io_bound_processes):
                 cpu_burst_tmp *= 4
-            print(f'--> CPU burst {cpu_burst_tmp}ms', end='')
+            # print(f'--> CPU burst {cpu_burst_tmp}ms', end='')
             Process_.add_cpu_burst(cpu_burst_tmp)
             io_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound))) * 10
             if (process + 1 > io_bound_processes):
                 io_burst_tmp = io_burst_tmp // 4
-            print(f' --> I/O burst {io_burst_tmp}ms')
+            # print(f' --> I/O burst {io_burst_tmp}ms')
             Process_.add_io_bursts(io_burst_tmp)
         cpu_burst_tmp = math.ceil((next_exp(lambda_, rand, upper_bound)))
         if (process + 1 > io_bound_processes):
             cpu_burst_tmp *= 4
-        print(f'--> CPU burst {cpu_burst_tmp}ms')
+        # print(f'--> CPU burst {cpu_burst_tmp}ms')
         Process_.add_cpu_burst(cpu_burst_tmp)
 
 
@@ -102,10 +105,14 @@ class Process(object):
         self.io_bursts = []
         self.total_bursts = 0
         self.arrival_time = 0
+        self.start_time = 0
+        self.num_cpu_bursts = 0
+        self.cpu_burst_index = 0
 
     def add_cpu_burst(self, cpu_burst):
         self.cpu_bursts.append(cpu_burst)
         self.total_bursts += 1
+        self.num_cpu_bursts += 1
 
     def add_io_bursts(self, io_burst):
         self.cpu_bursts.append(io_burst)
@@ -116,6 +123,36 @@ class Process(object):
 
     def get_process_name(self):
         return self.name
+
+    def get_arrival_time(self):
+        return self.arrival_time
+
+    def set_start_time(self, start_time):
+        self.start_time = start_time
+
+    def get_start_time(self):
+        return self.start_time
+
+    def get_cpu_burst_array(self):
+        return self.cpu_bursts
+
+    def get_io_burst_array(self):
+        return self.io_bursts
+
+    def get_num_cpu_bursts(self):
+        return self.num_cpu_bursts
+
+    def use_cpu_burst(self):
+        self.num_cpu_bursts -= 1
+
+    def increment_cpu_burst_index(self):
+        self.cpu_burst_index += 1
+
+    def get_cpu_burst_index(self):
+        return self.cpu_burst_index
+
+
+
 
 '''
 class Simulator(object):
@@ -173,4 +210,6 @@ if __name__ == '__main__':
 
     print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate}; t_slice={time_slice}ms >>>')
 
-    fcfs()
+    print(process_array[0].num_cpu_bursts)
+
+    fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
