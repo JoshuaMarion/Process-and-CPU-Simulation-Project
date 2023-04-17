@@ -14,7 +14,6 @@ def fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bou
 
     # make dictionary of things to print??
     hshmap = {}
-    print()
 
     while (time < 500000):
         time += 1
@@ -39,7 +38,7 @@ def fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bou
             for process in process_array:
                # print(f'process name is {process.get_process_name()}')
                 if (process.get_start_time() == time): #We now need to finish a cpu burst
-                    print(f'process name: {process.get_process_name()}, time = {time}')
+                    # print(f'process name: {process.get_process_name()}, time = {time}')
                     tmp_cpu_burst = process.get_cpu_burst_array()[process.get_cpu_burst_index()]
                     print(f'time {time}ms: Process {process.get_process_name()} started using the CPU for {tmp_cpu_burst}ms burst [Q <empty>]')
                     current_process_queue.append(process)
@@ -60,15 +59,17 @@ def fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bou
                                 start_time_set.add(tmp)
 
                     # todo: I HAVE NO CLUE IF THIS WORKS OR WHY IF IT DOES
-                    if (len(current_process_queue)!=0):
-                        time += (context_switch_time//2)
-                        pass
+
                     time += tmp_cpu_burst
 
                     print(f'time {time}ms: Process {process.get_process_name()} completed a CPU burst; {process.get_num_cpu_bursts()} bursts to go [Q <empty>]')
-                    tmp_io_burst = time + process.get_io_burst_array()[process.get_io_burst_index()]
+                    # todo: I HAVE NO CLUE IF THIS WORKS OR WHY IF IT DOES
+                    if (len(current_process_queue) != 0):
+                        tmp_io_burst = time + process.get_io_burst_array()[process.get_io_burst_index()] + (context_switch_time // 2)
+                    else:
+                        tmp_io_burst = time + process.get_io_burst_array()[process.get_io_burst_index()]
                     print(f'time {time}ms: Process {process.get_process_name()} switching out of CPU; blocking on I/O until time {tmp_io_burst}ms [Q <empty>]')
-                    print(current_process_queue[0].get_process_name())
+                    # print(current_process_queue[0].get_process_name())
                     current_process_queue.pop(0)
 
 
