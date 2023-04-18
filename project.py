@@ -109,6 +109,8 @@ class Process(object):
         self.num_cpu_bursts = 0
         self.cpu_burst_index = 0
         self.io_burst_index = 0
+        self.next_time = 0
+        self.io_blocked_until = 0
 
         self.interesting = 0
 
@@ -166,6 +168,18 @@ class Process(object):
     def get_io_burst_index(self):
         return self.io_burst_index
 
+    def set_next_time(self, next_time):
+        self.next_time = next_time
+
+    def get_next_time(self):
+        return self.next_time
+
+    def set_io_blocked_until(self, blocked_io):
+        self.io_blocked_until = blocked_io
+
+    def get_io_blocked_until(self):
+        return self.io_blocked_until
+
 
 
 
@@ -220,6 +234,8 @@ if __name__ == '__main__':
     time_slice = int(sys.argv[8])
 
     part_one(processes, cpu_bound_processes, io_bound_processes, seed, lambda_, upper_bound)
+
+    print()
 
     # Part 2 starts, Could be it's own function
 
