@@ -2,7 +2,6 @@ import queue
 
 def fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice):
     '''
-
     :param process_array: Process Array that has name, arrival time
     :return:
     '''

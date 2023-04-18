@@ -110,6 +110,14 @@ class Process(object):
         self.cpu_burst_index = 0
         self.io_burst_index = 0
 
+        self.interesting = 0
+
+    def get_interesting(self):
+        return self.interesting
+    
+    def set_interesting(self, number):
+        self.interesting = number
+
     def add_cpu_burst(self, cpu_burst):
         self.cpu_bursts.append(cpu_burst)
         self.total_bursts += 1
@@ -183,10 +191,8 @@ if __name__ == '__main__':
     6th: 4ms is time required to make a context switch 
     7th: 0.75 is estimate cpu burst time, for SJF and SRT.
     8th: 256 is time slice in ms
-    
-    
-    '''
 
+    '''
 
     # number of process. assigned alphabeticals from A-Z, most is 26.
     processes = int(sys.argv[1])
@@ -219,5 +225,5 @@ if __name__ == '__main__':
 
     print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate}; t_slice={time_slice}ms >>>')
 
-    fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
-    #rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
+    # fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
+    rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
