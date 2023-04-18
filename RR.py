@@ -13,5 +13,42 @@
 
 import queue
 
-def rr():
-    pass
+def printQueue(readyState):
+    str = "[Q "
+    if len(readyState) == 0:
+        return str + "empty]"
+    for i in readyState:
+        str += i.name
+    str += "]"
+    return str
+
+def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice):
+    # :)   
+    # print("time 0ms: Simulator started for RR [Q <empty>]")
+    # print("VAL'S HERE 0 :)")
+    interesting_events = queue.PriorityQueue()
+
+    for event in process_array:
+        interesting_events.put(event.get_arrival_time())
+
+    time = 0
+    current_process_queue = []
+    start_time_set = set()
+
+    print("time 0ms: Simulator started for RR with time slice " + str(time_slice) + "ms " + printQueue(current_process_queue) )
+
+    while not interesting_events.empty() :
+        priority, hi = interesting_events.get()
+        print(priority+" AND "+hi)
+        time+=1
+        for process in process_array:
+            if process.get_arrival_time() == time:
+                print(f'time {process.get_arrival_time()}ms: Process {process.get_process_name()} arrived; added to ready queue [Q {process.get_process_name()}]')
+                if (len(current_process_queue) == 0):
+                    temp = process.get_arrival_time() + (context_switch_time/2)
+                    process.set_start_time(temp)
+                    start_time_set.add(temp)
+
+    print("time 0ms: Simulator started for RR with time slice " + str(time_slice) + "ms " + printQueue(current_process_queue) )
+
+    # while not priorities.empty():
