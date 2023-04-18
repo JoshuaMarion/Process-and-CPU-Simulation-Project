@@ -188,9 +188,7 @@ if __name__ == '__main__':
 
     '''
     Part 2
-    example: python project.py 3 1 1024 0.001 3000 4 0.75 256
-    When running, use only your function
-    
+    example run project.py 3 1 1024 0.001 3000 4 0.75 256
     1st: 3 is number of process. assigned alphabeticals from A-Z, most is 26.
     2nd: 1 is number of cpu-bound processes
     3rd: 1024 is seed for the pseudorandom number sequence
@@ -238,3 +236,4 @@ if __name__ == '__main__':
     print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate}; t_slice={time_slice}ms >>>')
 
     fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
+    #rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
