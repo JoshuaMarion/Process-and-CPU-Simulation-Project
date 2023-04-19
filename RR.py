@@ -33,7 +33,7 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
     for process in process_array:
         interesting_events.put((process.get_arrival_time(),process))
 
-    print("time 0ms: Simulator started for RR with time slice " + str(time_slice) + "ms " + printQueue(current_process_queue) )
+    # print("time 0ms: Simulator started for RR with time slice " + str(time_slice) + "ms " + printQueue(current_process_queue) )
 
     while not interesting_events.empty() :
         priority, process = interesting_events.get()
@@ -60,9 +60,9 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
                 process.add_cpu_burst(process.get_cpu_burst_array()[0]*-1)
                 time+= int(context_switch_time/2)
 
-                print("time " + str(time) + "ms: Process " + process.get_process_name + " started using the CPU for remaining "+str(process.get_cpu_burst_array()[0])+ "ms of " + str(process.get_cpu_burst_array()[0] + time_slice) + "ms burst " + printQueue(current_process_queue))
+                print("time " + str(time) + "ms: Process " + process.get_process_name() + " started using the CPU for remaining "+str(process.get_cpu_burst_array()[0])+ "ms of " + str(process.get_cpu_burst_array()[0] + time_slice) + "ms burst " + printQueue(current_process_queue))
                 process.set_interesting(2)
-                interesting_events.put((time+process.get_cpu_burst_array()[0]), process)
+                interesting_events.put((time+process.get_cpu_burst_array()[0], process))
             else:
                 time+=int(context_switch_time/2)
                 print("time " + str(time) + "ms: Process "+ process.get_process_name()+" started using the CPU for " + str(process.get_cpu_burst_array()[0])+" ms burst " + printQueue(current_process_queue))
@@ -86,11 +86,11 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
                 print("time " + str(time) + "ms: Process " + process.get_process_name() + " switching out of CPU; will block on I/O until time " +  str(process.get_io_burst_array()[0]+ time + int(context_switch_time/2)) + "ms " + printQueue(current_process_queue))
                 
                 process.set_interesting(4)
-                interesting_events.put((time+process.get_io_burst_array()[0]+int(context_switch_time/2), current_process_queue))
+                interesting_events.put((time+process.get_io_burst_array()[0]+int(context_switch_time/2), process))
 
             if len(current_process_queue) > 0:
-                process.set_interesting(5)
-                interesting_events.put((time + int(context_switch_time/2), process)) #potentially fix this
+                current_process_queue[0].set_interesting(5)
+                interesting_events.put((time + int(context_switch_time/2), current_process_queue[0])) #potentially fix this +++
         elif event == 3:
             process.get_cpu_burst_array()[0] -= time_slice
             if len(current_process_queue) == 0:
@@ -101,19 +101,19 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
                 next_cpu = 0
                 print("time " + str(time) + "ms: Time slice expired; process " + process.get_process_name() + " preempted with " + str(process.get_cpu_burst_array()[0]) + "ms to go " + printQueue(current_process_queue))
                 process.get_cpu_burst_array()[0] *= -1
-                process.set_interesting(5)
-                interesting_events.put((time+context_switch_time/2, process)) #potentially fix this
+                current_process_queue[0].set_interesting(5)
+                interesting_events.put((time+context_switch_time/2, current_process_queue[0])) #potentially fix this +++
         elif event == 4:
             del process.get_io_burst_array()[0]
             current_process_queue.append(process)
             current_process_queue[0].set_interesting(5)
-            interesting_events.put(time, current_process_queue[0]) #maybe fix this
+            interesting_events.put((time, current_process_queue[0])) #maybe fix this +++
             print("time " + str(time) + "ms: Process " + process.get_process_name() + " completed I/O; added to ready queue " + printQueue(current_process_queue))
         elif event == 5:
             if next_cpu != 0:
                 continue
             else:
-                process.set_interesting(2)
+                process.set_interesting(1)
                 interesting_events.put((time, process))
 
                 if process.get_cpu_burst_array()[0] < 0:
