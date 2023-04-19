@@ -17,7 +17,6 @@ def fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bou
     # This is correct for the first test case, not the others
 
     '''
-
     :param process_array: Process Array that has name, arrival time
     :return:
 
