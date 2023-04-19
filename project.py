@@ -109,6 +109,16 @@ class Process(object):
         self.num_cpu_bursts = 0
         self.cpu_burst_index = 0
         self.io_burst_index = 0
+        self.next_time = 0
+        self.io_blocked_until = 0
+
+        self.interesting = 0
+
+    def get_interesting(self):
+        return self.interesting
+
+    def set_interesting(self, number):
+        self.interesting = number
 
     def add_cpu_burst(self, cpu_burst):
         self.cpu_bursts.append(cpu_burst)
@@ -158,6 +168,18 @@ class Process(object):
     def get_io_burst_index(self):
         return self.io_burst_index
 
+    def set_next_time(self, next_time):
+        self.next_time = next_time
+
+    def get_next_time(self):
+        return self.next_time
+
+    def set_io_blocked_until(self, blocked_io):
+        self.io_blocked_until = blocked_io
+
+    def get_io_blocked_until(self):
+        return self.io_blocked_until
+
 
 
 
@@ -174,9 +196,7 @@ if __name__ == '__main__':
 
     '''
     Part 2
-    example: python project.py 3 1 1024 0.001 3000 4 0.75 256
-    When running, use only your function
-    
+    example run project.py 3 1 1024 0.001 3000 4 0.75 256
     1st: 3 is number of process. assigned alphabeticals from A-Z, most is 26.
     2nd: 1 is number of cpu-bound processes
     3rd: 1024 is seed for the pseudorandom number sequence
@@ -185,10 +205,8 @@ if __name__ == '__main__':
     6th: 4ms is time required to make a context switch 
     7th: 0.75 is estimate cpu burst time, for SJF and SRT.
     8th: 256 is time slice in ms
-    
-    
-    '''
 
+    '''
 
     # number of process. assigned alphabeticals from A-Z, most is 26.
     processes = int(sys.argv[1])
@@ -217,8 +235,16 @@ if __name__ == '__main__':
 
     part_one(processes, cpu_bound_processes, io_bound_processes, seed, lambda_, upper_bound)
 
+    print()
+
     # Part 2 starts, Could be it's own function
 
-    print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate}; t_slice={time_slice}ms >>>')
+    print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate:.2f}; t_slice={time_slice}ms >>>')
 
     fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
+
+    # sjf()
+
+    # srt()
+
+    # rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
