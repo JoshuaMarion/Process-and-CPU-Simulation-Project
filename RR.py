@@ -57,21 +57,21 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
             print("time " + str(time) + "ms: Process " + str(process.get_process_name() + " arrived; added to ready queue " + printQueue(current_process_queue)))
         elif event == 1:
             if(process.get_cpu_burst_array()[0] < 0):
-                process.add_cpu_burst(process.get_cpu_burst_array()[0]*-1)
+                process.add_cpu_burst(process.get_cpu_burst_array()[0]*(-1))
                 time+= int(context_switch_time/2)
 
                 print("time " + str(time) + "ms: Process " + process.get_process_name() + " started using the CPU for remaining "+str(process.get_cpu_burst_array()[0])+ "ms of " + str(process.get_cpu_burst_array()[0] + time_slice) + "ms burst " + printQueue(current_process_queue))
                 process.set_interesting(2)
-                interesting_events.put((time+process.get_cpu_burst_array()[0], process))
+                interesting_events.put(((time+process.get_cpu_burst_array()[0]), process))
             else:
                 time+=int(context_switch_time/2)
                 print("time " + str(time) + "ms: Process "+ process.get_process_name()+" started using the CPU for " + str(process.get_cpu_burst_array()[0])+" ms burst " + printQueue(current_process_queue))
                 if process.get_cpu_burst_array()[0] > time_slice:
                     process.set_interesting(3)
-                    interesting_events.put((time+process.get_cpu_burst_array()[0], process))
+                    interesting_events.put(((time+process.get_cpu_burst_array()[0]), process))
                 else:
                     process.set_interesting(2)
-                    interesting_events.put((time+process.get_cpu_burst_array()[0], process))
+                    interesting_events.put(((time+process.get_cpu_burst_array()[0]), process))
         elif event == 2: 
             next_cpu = 0
             del process.get_cpu_burst_array()[0]
