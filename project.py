@@ -241,7 +241,7 @@ if __name__ == '__main__':
 
     print(f'<<< PROJECT PART II -- t_cs={context_switch_time}ms; alpha={cpu_burst_time_estimate:.2f}; t_slice={time_slice}ms >>>')
 
-    fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
+    # fcfs(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound, context_switch_time, cpu_burst_time_estimate, time_slice)
 
     # sjf()
 

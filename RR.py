@@ -90,19 +90,19 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
 
             if len(current_process_queue) > 0:
                 current_process_queue[0].set_interesting(5)
-                interesting_events.put((time + int(context_switch_time/2), current_process_queue[0])) #potentially fix this +++
+                interesting_events.put(((time + int(context_switch_time/2)), current_process_queue[0])) #potentially fix this +++
         elif event == 3:
             process.get_cpu_burst_array()[0] -= time_slice
             if len(current_process_queue) == 0:
                 print("time " + str(time) + "ms: Time slice expired; no preemption because ready queue is empty [Q empty]")
                 process.set_interesting(2)
-                interesting_events.put((time+process.get_cpu_burst_array()[0],process))
+                interesting_events.put(((time+process.get_cpu_burst_array()[0]), process))
             else:
                 next_cpu = 0
                 print("time " + str(time) + "ms: Time slice expired; process " + process.get_process_name() + " preempted with " + str(process.get_cpu_burst_array()[0]) + "ms to go " + printQueue(current_process_queue))
                 process.get_cpu_burst_array()[0] *= -1
                 current_process_queue[0].set_interesting(5)
-                interesting_events.put((time+context_switch_time/2, current_process_queue[0])) #potentially fix this +++
+                interesting_events.put(((time+(context_switch_time/2)), current_process_queue[0])) #potentially fix this +++
         elif event == 4:
             del process.get_io_burst_array()[0]
             current_process_queue.append(process)
@@ -115,6 +115,7 @@ def rr(process_array, processes, cpu_bound_processes, seed, lambda_, upper_bound
             else:
                 process.set_interesting(1)
                 interesting_events.put((time, process))
+                interesting_events.put()
 
                 if process.get_cpu_burst_array()[0] < 0:
                     next_cpu = time+(process.get_cpu_burst_array()[0] * (-1))
